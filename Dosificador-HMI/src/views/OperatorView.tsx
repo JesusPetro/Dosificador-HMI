@@ -6,13 +6,15 @@ import ProcessDashboard from '../components/operator/ProcessDashboard'
 import ProductionPipeline from '../components/operator/ProductionPipeline'
 import RecentCompletions from '../components/operator/RecentCompletions'
 import EfficiencyPanel from '../components/operator/EfficiencyPanel'
+import TeamView from '../components/operator/TeamView'
 import type { Order, SensorData, EfficiencyMetrics, Alert } from '../types'
 
-type OperatorTab = 'dashboard' | 'logs'
+type OperatorTab = 'dashboard' | 'logs' | 'team'
 
 const TAB_ITEMS: { tab: OperatorTab; label: string; icon: string }[] = [
   { tab: 'dashboard', label: 'Panel de control',         icon: 'dashboard' },
   { tab: 'logs',      label: 'Registros del sistema',    icon: 'list_alt' },
+  { tab: 'team',      label: 'Quiénes somos',            icon: 'group'     },
 ]
 
 const MOCK_SENSORS: SensorData = {
@@ -250,6 +252,8 @@ export default function OperatorView() {
               Vista de registros del sistema — pendiente de implementacion
             </div>
           )}
+
+          {activeTab === 'team' && <TeamView />}
 
           <Footer />
         </main>
