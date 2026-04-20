@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import type { Order, OrderComponents } from '../../types'
+import type { ToastType } from '../../hooks/useToast'
 
 interface OrderFormProps {
   onOrderSubmit: (order: Order) => void
+  onToast: (message: string, type?: ToastType) => void
 }
 
 interface ComponentFieldProps {
@@ -54,9 +56,8 @@ const FIELDS: { id: keyof OrderComponents; label: string; icon: string }[] = [
   { id: 'nuts',   label: 'Tuercas',  icon: 'settings_input_component' },
 ]
 
-export default function OrderForm({ onOrderSubmit }: OrderFormProps) {
+export default function OrderForm({ onOrderSubmit, onToast }: OrderFormProps) {
   const [components, setComponents] = useState<OrderComponents>({ screws: 0, nuts: 0 })
-  const [submitted, setSubmitted] = useState(false)
 
   const isEmpty = components.screws === 0 && components.nuts === 0
 
@@ -66,18 +67,21 @@ export default function OrderForm({ onOrderSubmit }: OrderFormProps) {
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    setSubmitted(true)
-    if (isEmpty) return
+    if (isEmpty) {
+      onToast('Debes ingresar al menos una unidad de algún componente.', 'error')
+      return
+    }
+    const orderId = `#ORD-${Math.floor(Math.random() * 9000 + 1000)}`
     onOrderSubmit({
-      id: `#ORD-${Math.floor(Math.random() * 9000 + 1000)}`,
+      id: orderId,
       priority: 'standard',
       status: 'queue',
       components,
       quantity: components.screws + components.nuts,
       createdAt: new Date().toISOString(),
     })
+    onToast(`Pedido ${orderId} añadido a la cola.`, 'success')
     setComponents({ screws: 0, nuts: 0 })
-    setSubmitted(false)
     // TODO: enviar pedido al backend/PLC
   }
 
@@ -103,12 +107,6 @@ export default function OrderForm({ onOrderSubmit }: OrderFormProps) {
             />
           ))}
         </div>
-
-        {submitted && isEmpty && (
-          <p className="text-xs text-red-500 font-medium">
-            * Debes ingresar al menos una unidad de algún componente.
-          </p>
-        )}
 
         <div className="pt-4">
           <button

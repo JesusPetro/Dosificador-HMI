@@ -4,10 +4,13 @@ import OrderForm from '../components/user/OrderForm'
 import ProcessLegend from '../components/user/ProcessLegend'
 import QueueStatus from '../components/user/QueueStatus'
 import RecentOrders from '../components/user/RecentOrders'
+import Toaster from '../components/ui/Toaster'
 import { useRecentOrders } from '../hooks/useRecentOrders'
+import { useToast } from '../hooks/useToast'
 
 export default function UserView() {
   const { orders, addOrder } = useRecentOrders()
+  const { toasts, toast, dismiss } = useToast()
 
   return (
     <div className="bg-surface text-on-surface min-h-screen flex flex-col">
@@ -16,7 +19,7 @@ export default function UserView() {
       <main className="mt-14 grow flex flex-col items-center p-8 max-w-6xl mx-auto w-full">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 w-full">
           <div className="lg:col-span-7 space-y-8">
-            <OrderForm onOrderSubmit={addOrder} />
+            <OrderForm onOrderSubmit={addOrder} onToast={toast} />
             <ProcessLegend />
           </div>
           <div className="lg:col-span-5 space-y-8">
@@ -27,6 +30,7 @@ export default function UserView() {
       </main>
 
       <Footer />
+      <Toaster toasts={toasts} onDismiss={dismiss} />
     </div>
   )
 }
