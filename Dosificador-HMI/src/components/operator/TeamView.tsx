@@ -32,19 +32,19 @@ export default function TeamView() {
   const row2 = TEAM.slice(3)
 
   return (
-    <div className="flex flex-col items-center justify-center py-16 gap-16">
+    <div className="flex flex-col items-center justify-center gap-12 px-6 h-full grow">
       <div className="text-center">
         <h2 className="text-2xl font-bold text-on-surface">Quiénes somos</h2>
         <p className="text-sm text-on-surface-variant mt-1">El equipo detrás del sistema</p>
       </div>
 
-      <div className="flex flex-col items-center gap-12">
-        <div className="flex gap-12 flex-wrap justify-center">
+      <div className="flex flex-col items-center gap-10">
+        <div className="flex gap-10 flex-wrap justify-center">
           {row1.map((m) => (
             <MemberCard key={m.name} name={m.name} role={m.role} src={m.src} />
           ))}
         </div>
-        <div className="flex gap-12 flex-wrap justify-center">
+        <div className="flex gap-10 flex-wrap justify-center">
           {row2.map((m) => (
             <MemberCard key={m.name} name={m.name} role={m.role} src={m.src} />
           ))}

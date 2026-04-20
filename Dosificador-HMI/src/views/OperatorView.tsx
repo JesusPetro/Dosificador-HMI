@@ -217,7 +217,7 @@ export default function OperatorView() {
         </aside>
 
         {/* Contenido desplazable */}
-        <main className="lg:ml-56 grow p-4 lg:p-6 overflow-y-auto min-h-[calc(100dvh-3.5rem)] pb-16 lg:pb-6">
+        <main className={`lg:ml-56 grow overflow-y-auto min-h-[calc(100dvh-3.5rem)] pb-16 lg:pb-6 ${activeTab === 'team' ? '' : 'p-4 lg:p-6'}`}>
           {activeTab === 'dashboard' && (
             <div className="grid grid-cols-12 gap-6">
               {/* Sensores */}
@@ -255,7 +255,7 @@ export default function OperatorView() {
 
           {activeTab === 'team' && <TeamView />}
 
-          <Footer />
+          {activeTab !== 'team' && <Footer />}
         </main>
       </div>
 
