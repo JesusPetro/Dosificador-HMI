@@ -1,9 +1,9 @@
 const TEAM = [
-  { name: 'Jesús Petro',  role: 'Desarrollador Full-Stack', src: '/avatars/JesusPetro.svg' },
-  { name: 'María López',  role: 'Ingeniería de Procesos',   src: undefined },
-  { name: 'Carlos Ramos', role: 'Automatización & PLC',     src: undefined },
-  { name: 'Andrea Soto',  role: 'Diseño UX/UI',             src: undefined },
-  { name: 'Luis Mendoza', role: 'QA & Pruebas',             src: undefined },
+  { name: 'Victor Chamorro',  role: 'Electrónica',             src: '/avatars/Victor.png' },
+  { name: 'Yhonatan Quiñonez',  role: 'Diseño',   src: '/avatars/Yhonatan.png' },
+  { name: 'Alivettee Zambrano', role: 'Marketing',     src: '/avatars/Aly.png' },
+  { name: 'Jesús Petro',  role: 'Prototipado', src: '/avatars/Jesus.png' },
+  { name: 'Willian Navarro', role: 'Lider',             src: '/avatars/Willian.png' },
 ]
 
 interface MemberCardProps {
