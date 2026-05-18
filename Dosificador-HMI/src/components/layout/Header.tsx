@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { AppView, ConnectionStatus } from '../../types'
+import { useInfo } from '../../context/InfoContext'
 
 const VIEW_LABELS: Record<AppView, string> = {
   user:     'Pedidos',
@@ -47,6 +48,7 @@ function ConnectionIndicator({ status }: { status: ConnectionStatus }) {
 
 export default function Header({ view, connectionStatus }: HeaderProps) {
   const time = useClockWithConnection(connectionStatus)
+  const { open } = useInfo()
 
   return (
     <header className="fixed top-0 left-0 w-full z-50 flex items-center justify-between px-6 h-14 bg-white border-b border-outline-variant/20">
@@ -60,12 +62,24 @@ export default function Header({ view, connectionStatus }: HeaderProps) {
         </span>
       </div>
 
-      <div className="flex items-center gap-6">
-        {/* TODO: integrar con el estado real de conexión del PLC/backend */}
+      <div className="flex items-center gap-4">
         <ConnectionIndicator status={connectionStatus} />
         <span className="tabular-nums text-xs font-medium uppercase tracking-wider text-neutral-600">
           {time}
         </span>
+        <div className="h-4 w-px bg-outline-variant/40" />
+        <button
+          onClick={open}
+          title="Documentación del proyecto"
+          className="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors"
+        >
+          <span
+            className="material-symbols-outlined text-xl"
+            style={{ fontVariationSettings: '"FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24' }}
+          >
+            info
+          </span>
+        </button>
       </div>
     </header>
   )
