@@ -2,7 +2,7 @@ import { useState } from 'react'
 import type { Order } from '../types'
 
 const STORAGE_KEY = 'recent_orders'
-const MAX_ORDERS = 3
+const MAX_ORDERS = 30
 
 function loadFromStorage(): Order[] {
   try {
