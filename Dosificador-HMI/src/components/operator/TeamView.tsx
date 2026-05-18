@@ -1,9 +1,10 @@
 const TEAM = [
-  { name: 'Victor Chamorro',  role: 'Electrónica',             src: '/avatars/Victor.png' },
-  { name: 'Yhonatan Quiñonez',  role: 'Diseño',   src: '/avatars/Yhonatan.png' },
-  { name: 'Alivettee Zambrano', role: 'Marketing',     src: '/avatars/Aly.png' },
-  { name: 'Jesús Petro',  role: 'Prototipado', src: '/avatars/Jesus.png' },
-  { name: 'Willian Navarro', role: 'Lider',             src: '/avatars/Willian.png' },
+  { name: 'Victor Chamorro',    role: 'Electrónica',  src: '/avatars/Victor.png' },
+  { name: 'Yhonatan Quiñonez', role: 'Diseño',        src: '/avatars/Yhonatan.png' },
+  { name: 'Alivettee Zambrano', role: 'Marketing',    src: '/avatars/Aly.png' },
+  { name: 'Jesús Petro',        role: 'Prototipado',  src: '/avatars/Jesus.png' },
+  { name: 'Willian Navarro',    role: 'Lider',        src: '/avatars/Willian.png' },
+  { name: 'Alejandro Torres',   role: 'Prototipado',  src: '/avatars/Alejandro.png' },
 ]
 
 interface MemberCardProps {
