@@ -1,4 +1,6 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
+import gsap from 'gsap'
+import { useGSAP } from '@gsap/react'
 
 import Header from '../components/layout/Header'
 import Footer from '../components/layout/Footer'
@@ -7,7 +9,10 @@ import ProductionPipeline from '../components/operator/ProductionPipeline'
 import RecentCompletions from '../components/operator/RecentCompletions'
 import EfficiencyPanel from '../components/operator/EfficiencyPanel'
 import TeamView from '../components/operator/TeamView'
+import LogView from '../components/operator/log/LogView'
 import type { Order, SensorData, EfficiencyMetrics, Alert } from '../types'
+
+gsap.registerPlugin(useGSAP)
 
 type OperatorTab = 'dashboard' | 'logs' | 'team'
 
@@ -194,80 +199,108 @@ function BottomNavItem({ icon, active, onClick }: BottomNavItemProps) {
 
 export default function OperatorView() {
   const [activeTab, setActiveTab] = useState<OperatorTab>('dashboard')
+  const sidebarRef = useRef<HTMLElement>(null)
+  const bottomNavRef = useRef<HTMLElement>(null)
+  const tabContentRef = useRef<HTMLDivElement>(null)
+
+  useGSAP(() => {
+    gsap.from('.sidebar-item', {
+      x: -16,
+      opacity: 0,
+      duration: 0.35,
+      stagger: 0.08,
+      ease: 'power2.out',
+    })
+  }, { scope: sidebarRef })
+
+  useGSAP(() => {
+    gsap.from('.bottom-nav-item', {
+      y: 12,
+      opacity: 0,
+      duration: 0.35,
+      stagger: 0.07,
+      ease: 'power2.out',
+    })
+  }, { scope: bottomNavRef })
+
+  useGSAP(() => {
+    gsap.from(tabContentRef.current, {
+      y: 10,
+      opacity: 0,
+      duration: 0.3,
+      ease: 'power2.out',
+    })
+  }, { scope: tabContentRef, dependencies: [activeTab] })
 
   return (
     <div className="bg-surface text-on-surface min-h-dvh flex flex-col overflow-hidden">
       <Header view="operator" connectionStatus="connected" />
 
       <div className="mt-14 flex grow overflow-hidden">
-        {/* Sidebar — solo visible en pantallas grandes */}
-        <aside className="hidden lg:flex fixed left-0 top-14 h-[calc(100dvh-3.5rem)] w-56 flex-col pt-4 bg-neutral-50 border-r border-outline-variant/20 z-40">
+        <aside ref={sidebarRef} className="hidden lg:flex fixed left-0 top-14 h-[calc(100dvh-3.5rem)] w-56 flex-col pt-4 bg-neutral-50 border-r border-outline-variant/20 z-40">
           <nav className="flex-1 space-y-1 mt-4">
             {TAB_ITEMS.map(({ tab, label, icon }) => (
-              <SidebarItem
-                key={tab}
-                icon={icon}
-                label={label}
-                active={activeTab === tab}
-                onClick={() => setActiveTab(tab)}
-              />
+              <div key={tab} className="sidebar-item">
+                <SidebarItem
+                  icon={icon}
+                  label={label}
+                  active={activeTab === tab}
+                  onClick={() => setActiveTab(tab)}
+                />
+              </div>
             ))}
           </nav>
-
         </aside>
 
-        {/* Contenido desplazable */}
         <main className={`lg:ml-56 grow overflow-y-auto min-h-[calc(100dvh-3.5rem)] pb-16 lg:pb-6 ${activeTab === 'team' ? '' : 'p-4 lg:p-6'}`}>
-          {activeTab === 'dashboard' && (
-            <div className="grid grid-cols-12 gap-6">
-              {/* Sensores */}
-              <section className="col-span-12">
-                <ProcessDashboard sensors={MOCK_SENSORS} />
-              </section>
+          <div ref={tabContentRef}>
+            {activeTab === 'dashboard' && (
+              <div className="grid grid-cols-12 gap-6">
+                <section className="col-span-12">
+                  <ProcessDashboard sensors={MOCK_SENSORS} />
+                </section>
 
-              {/* Pipeline */}
-              <section className="col-span-12">
-                <ProductionPipeline orders={MOCK_ORDERS} />
-              </section>
+                <section className="col-span-12">
+                  <ProductionPipeline orders={MOCK_ORDERS} />
+                </section>
 
-              {/* Tabla + DEE */}
-              <section className="col-span-12 grid grid-cols-12 gap-6">
-                <div className="col-span-8">
-                  <RecentCompletions orders={MOCK_ORDERS} />
-                </div>
-                <div className="col-span-4">
-                  <EfficiencyPanel
-                    metrics={MOCK_METRICS}
-                    alerts={MOCK_ALERTS}
-                    shiftDelta={2.4}
-                  />
-                </div>
-              </section>
-            </div>
-          )}
+                <section className="col-span-12 grid grid-cols-12 gap-6">
+                  <div className="col-span-8">
+                    <RecentCompletions orders={MOCK_ORDERS} />
+                  </div>
+                  <div className="col-span-4">
+                    <EfficiencyPanel
+                      metrics={MOCK_METRICS}
+                      alerts={MOCK_ALERTS}
+                      shiftDelta={2.4}
+                    />
+                  </div>
+                </section>
+              </div>
+            )}
 
-          {activeTab === 'logs' && (
-            <div className="bg-surface-container-lowest rounded-xl border border-outline-variant/10 p-8 text-center text-on-surface-variant text-sm">
-              {/* TODO: implementar vista de registros del sistema */}
-              Vista de registros del sistema — pendiente de implementacion
-            </div>
-          )}
+            {activeTab === 'logs' && (
+              <div className="h-[calc(100dvh-3.5rem-2rem)] lg:h-[calc(100dvh-3.5rem-3rem)]">
+                <LogView />
+              </div>
+            )}
 
-          {activeTab === 'team' && <TeamView />}
+            {activeTab === 'team' && <TeamView />}
 
-          {activeTab !== 'team' && <Footer />}
+            {activeTab !== 'team' && <Footer />}
+          </div>
         </main>
       </div>
 
-      {/* Barra de navegación inferior — solo en mobile */}
-      <nav className="lg:hidden fixed bottom-0 left-0 w-full z-40 flex bg-surface-container-lowest border-t border-outline-variant/20">
+      <nav ref={bottomNavRef} className="lg:hidden fixed bottom-0 left-0 w-full z-40 flex bg-surface-container-lowest border-t border-outline-variant/20">
         {TAB_ITEMS.map(({ tab, icon }) => (
-          <BottomNavItem
-            key={tab}
-            icon={icon}
-            active={activeTab === tab}
-            onClick={() => setActiveTab(tab)}
-          />
+          <div key={tab} className="bottom-nav-item flex-1 flex">
+            <BottomNavItem
+              icon={icon}
+              active={activeTab === tab}
+              onClick={() => setActiveTab(tab)}
+            />
+          </div>
         ))}
       </nav>
     </div>

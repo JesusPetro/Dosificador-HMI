@@ -1,6 +1,10 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
+import gsap from 'gsap'
+import { useGSAP } from '@gsap/react'
 import type { Order, OrderComponents } from '../../types'
 import type { ToastType } from '../../hooks/useToast'
+
+gsap.registerPlugin(useGSAP)
 
 interface OrderFormProps {
   onOrderSubmit: (order: Order) => void
@@ -58,6 +62,8 @@ const FIELDS: { id: keyof OrderComponents; label: string; icon: string }[] = [
 
 export default function OrderForm({ onOrderSubmit, onToast }: OrderFormProps) {
   const [components, setComponents] = useState<OrderComponents>({ screws: 0, nuts: 0 })
+  const formRef = useRef<HTMLFormElement>(null)
+  const btnRef = useRef<HTMLButtonElement>(null)
 
   const isEmpty = components.screws === 0 && components.nuts === 0
 
@@ -69,6 +75,11 @@ export default function OrderForm({ onOrderSubmit, onToast }: OrderFormProps) {
     e.preventDefault()
     if (isEmpty) {
       onToast('Debes ingresar al menos una unidad de algún componente.', 'error')
+      gsap.to(formRef.current, {
+        keyframes: { x: [0, -6, 6, -4, 4, 0] },
+        duration: 0.32,
+        ease: 'none',
+      })
       return
     }
     const orderId = `#ORD-${Math.floor(Math.random() * 9000 + 1000)}`
@@ -81,6 +92,13 @@ export default function OrderForm({ onOrderSubmit, onToast }: OrderFormProps) {
       createdAt: new Date().toISOString(),
     })
     onToast(`Pedido ${orderId} añadido a la cola.`, 'success')
+    gsap.to(btnRef.current, {
+      scale: 1.03,
+      duration: 0.12,
+      ease: 'power1.out',
+      yoyo: true,
+      repeat: 1,
+    })
     setComponents({ screws: 0, nuts: 0 })
     // TODO: enviar pedido al backend/PLC
   }
@@ -96,7 +114,7 @@ export default function OrderForm({ onOrderSubmit, onToast }: OrderFormProps) {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-8">
+      <form ref={formRef} onSubmit={handleSubmit} className="space-y-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {FIELDS.map(f => (
             <ComponentField
@@ -110,6 +128,7 @@ export default function OrderForm({ onOrderSubmit, onToast }: OrderFormProps) {
 
         <div className="pt-4">
           <button
+            ref={btnRef}
             type="submit"
             className="w-full bg-primary hover:bg-primary-container text-on-primary py-5 rounded-xl font-bold text-lg tracking-wide transition-all active:scale-[0.98] flex items-center justify-center gap-3"
           >

@@ -1,3 +1,9 @@
+import { useRef } from 'react'
+import gsap from 'gsap'
+import { useGSAP } from '@gsap/react'
+
+gsap.registerPlugin(useGSAP)
+
 interface LegendItem {
   icon: string
   label: string
@@ -13,8 +19,20 @@ const STAGES: LegendItem[] = [
 ]
 
 export default function ProcessLegend() {
+  const containerRef = useRef<HTMLElement>(null)
+
+  useGSAP(() => {
+    gsap.from('.legend-item', {
+      y: 14,
+      opacity: 0,
+      duration: 0.35,
+      stagger: 0.07,
+      ease: 'power2.out',
+    })
+  }, { scope: containerRef })
+
   return (
-    <section className="bg-surface-container-low rounded-xl p-6">
+    <section ref={containerRef} className="bg-surface-container-low rounded-xl p-6">
       <h3 className="text-xs font-extrabold uppercase tracking-widest text-on-surface-variant mb-4">
         Referencia de Proceso
       </h3>
@@ -22,7 +40,7 @@ export default function ProcessLegend() {
         {STAGES.map(({ icon, label, color, bg }) => (
           <div
             key={label}
-            className="flex flex-col items-center gap-2 bg-surface-container-lowest p-3 rounded-lg border border-outline-variant/5"
+            className="legend-item flex flex-col items-center gap-2 bg-surface-container-lowest p-3 rounded-lg border border-outline-variant/5"
           >
             <span
               className={`material-symbols-outlined ${color} ${bg} p-2 rounded`}
